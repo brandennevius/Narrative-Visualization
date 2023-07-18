@@ -6,11 +6,36 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3-annotation.v2.min.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3-svg-annotation@2/d3-annotation.min.js"></script>
 </head>
 
 <body>
     <div id="scene1"></div>
     <script>
+        // Parse the date / time
+        const parseTime = d3.timeParse("%m/%d/%Y");
+
+        // Function to find the highest and lowest points within a date range
+        function findHighLow(data, startYear, endYear) {
+            // Filter data based on the date range
+            const filteredData = data.filter(d => d.date.getFullYear() >= startYear && d.date.getFullYear() <= endYear);
+
+            // Find the highest point
+            const highest = d3.max(filteredData, d => d.price);
+
+            // Find the lowest point
+            const lowest = d3.min(filteredData, d => d.price);
+
+            // Find the dates of the highest and lowest points
+            const highestDate = filteredData.find(d => d.price === highest).date;
+            const lowestDate = filteredData.find(d => d.price === lowest).date;
+
+            return { highest, highestDate, lowest, lowestDate };
+        }
+
+     
+
         // Set the dimensions of the graph
         const margin = { top: 50, right: 30, bottom: 30, left: 60 },
             width = 800 - margin.left - margin.right,
@@ -22,23 +47,19 @@
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-        // Parse the date / time
-        const parseTime = d3.timeParse("%m/%d/%Y");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // Read the data
         d3.csv("sp500.csv").then(function (data) {
             // parse the date and price 
             data.forEach(function (d) {
-                d.Date = parseTime(d.Date);
-                d.Price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
+                d.date = parseTime(d.Date);
+                d.price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
             });
 
             // Add X axis
             const x = d3.scaleTime()
-                .domain(d3.extent(data, function (d) { return d.Date; }))
+                .domain(d3.extent(data, function (d) { return d.date; }))
                 .range([0, width]);
             svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
@@ -46,7 +67,7 @@
 
             // Add Y axis
             const y = d3.scaleLinear()
-                .domain([0, d3.max(data, function (d) { return +d.Price; })])
+                .domain([0, d3.max(data, function (d) { return +d.price; })])
                 .range([height, 0]);
             svg.append("g")
                 .call(d3.axisLeft(y));
@@ -67,11 +88,83 @@
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)
                 .attr("d", d3.line()
-                    .x(function (d) { return x(d.Date) })
-                    .y(function (d) { return y(d.Price) })
+                    .x(function (d) { return x(d.date) })
+                    .y(function (d) { return y(d.price) })
                 )
+
+            // Find the high and low points for each bubble/crash
+            const dotCom = findHighLow(data, 2000, 2004);
+            const financialCrisis = findHighLow(data, 2007, 2009);
+            const covid = findHighLow(data, 2020, 2022);
+
+            // Format the date
+            const formatDate = d3.timeFormat("%m/%d/%Y");
+
+            // Create the annotations
+            const annotations = [
+                {
+                    note: {
+                        label: `Dot-Com Bubble Peak: ${dotCom.highest}`,
+                        title: formatDate(dotCom.highestDate)
+                    },
+                    x: x(dotCom.highestDate),
+                    y: y(dotCom.highest),
+                    dy: 100,
+                    dx: 100
+                },
+                {
+                    note: {
+                        label: `Dot-Com Bubble Bottom: ${dotCom.lowest}`,
+                        title: formatDate(dotCom.lowestDate)
+                    },
+                    x: x(dotCom.lowestDate),
+                    y: y(dotCom.lowest),
+                    dy: 100,
+                    dx: 100
+                },
+                {
+                    note: {
+                        label: `Financial Crisis Peak: ${financialCrisis.highest}`,
+                        title: formatDate(financialCrisis.highestDate)
+                    },
+                    x: x(financialCrisis.highestDate),
+                    y: y(financialCrisis.highest),
+                    dy: 100,
+                    dx: 100
+                },
+                {
+                    note: {
+                        label: `Financial Crisis Bottom: ${financialCrisis.lowest}`,
+                        title: formatDate(financialCrisis.lowestDate)
+                    },
+                    x: x(financialCrisis.lowestDate),
+                    y: y(financialCrisis.lowest),
+                    dy: 100,
+                    dx: 100
+                },
+                {
+                    note: {
+                        label: `COVID-19 Crash Bottom: ${covid.lowest}`,
+                        title: formatDate(covid.lowestDate)
+                    },
+                    x: x(covid.lowestDate),
+                    y: y(covid.lowest),
+                    dy: 100,
+                    dx: 100
+                },
+            ];
+
+            // Adding annotations to the chart
+            const makeAnnotations = d3.annotation()
+                .annotations(annotations);
+
+            d3.select("svg")
+                .append("g")
+                .call(makeAnnotations);
         });
     </script>
+
+
 </body>
 
 </html>

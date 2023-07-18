@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>S&P 500 Trend from 2000-Present</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-annotation.v2.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+
+<body>
+    <div id="scene1"></div>
+    <script>
+        // Set the dimensions of the graph
+        const margin = { top: 50, right: 30, bottom: 30, left: 60 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // Append the svg object to the div
+        const svg = d3.select("#scene1")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Parse the date / time
+        const parseTime = d3.timeParse("%m/%d/%Y");
+
+        // Read the data
+        d3.csv("sp500.csv").then(function (data) {
+            // parse the date and price 
+            data.forEach(function (d) {
+                d.Date = parseTime(d.Date);
+                d.Price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
+            });
+
+            // Add X axis
+            const x = d3.scaleTime()
+                .domain(d3.extent(data, function (d) { return d.Date; }))
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, function (d) { return +d.Price; })])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Add title to graph
+            svg.append("text")
+                .attr("x", (width / 2))
+                .attr("y", 0 - (margin.top / 2)) // Adjust the y-position of the title
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Price vs Date");
+
+            // Add the line
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 1.5)
+                .attr("d", d3.line()
+                    .x(function (d) { return x(d.Date) })
+                    .y(function (d) { return y(d.Price) })
+                )
+        });
+    </script>
+</body>
+
+</html>

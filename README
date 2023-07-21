@@ -1,0 +1,14 @@
+
+
+
+Messaging: Your current narrative seems to show significant peaks and troughs in the S&P 500, related to major economic events (dot-com bubble, financial crisis, COVID-19). You should make sure this is clearly stated in the visualization, possibly with an introduction text.
+
+Narrative Structure: You're essentially following a "martini glass" narrative structure, where you present a sequence of scenes (annotations in your case) and then allow user exploration.
+
+Visual Structure: The line graph with date and S&P 500 index is a suitable structure for your narrative. However, you may want to highlight the peaks and troughs visually, perhaps by coloring those points differently or using different shapes. You could also include arrows or other visual aids to guide the viewer from one scene to the next.
+
+Scenes: Currently, your scenes are essentially your annotated points on the graph. You might want to create different views of the data for each scene - perhaps zooming into the specific years of each event to show more detail.
+
+Annotations: You are using annotations to mark the significant points on the line graph. You might consider providing more information in your annotations, such as brief details about what happened during those times.
+
+Parameters and Triggers: As for parameters, you are controlling the state of your visualization using the date and price values. Currently, you do not have any user triggers that lead to a change in state, as your visualization is mostly static. You may consider adding some interactivity - for example, a dropdown menu that lets users choose to view the data for only one of the events, or tooltips that provide more information when users hover over a data point.

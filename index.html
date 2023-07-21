@@ -4,167 +4,193 @@
 <head>
     <title>S&P 500 Trend from 2000-Present</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/d3-annotation.v2.min.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/d3-svg-annotation@2/d3-annotation.min.js"></script>
+
+    <style>
+        .annotation-note-title {
+            fill: black;
+            font-size: 0.8em;
+        }
+
+        .annotation-note-label {
+            fill: black;
+            font-size: 0.8em;
+        }
+
+        .annotation-note-bg {
+            fill: #FFEFCC;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="scene1"></div>
+    <div id="scene1">
+        <p id="introduction"></p>
+        <!-- Here is where your SVG will be appended -->
+    </div>
     <script>
+      const margin = { top: 100, right: 100, bottom: 100, left: 100 },
+            width = window.innerWidth - margin.left - margin.right,  // use window.innerWidth
+            height = window.innerHeight - margin.top - margin.bottom; // use window.innerWidth
+
         // Parse the date / time
         const parseTime = d3.timeParse("%m/%d/%Y");
 
         // Function to find the highest and lowest points within a date range
-        function findHighLow(data, startYear, endYear) {
-            // Filter data based on the date range
-            const filteredData = data.filter(d => d.date.getFullYear() >= startYear && d.date.getFullYear() <= endYear);
+        function findHighLow(data, startYear, endYear, startMonth, endMonth) {
 
+            // Filter data based on the date range
+            const filteredData = data.filter(d =>
+                (d.Date.getFullYear() > startYear || (d.Date.getFullYear() === startYear && d.Date.getMonth() >= startMonth)) &&
+                (d.Date.getFullYear() < endYear || (d.Date.getFullYear() === endYear && d.Date.getMonth() <= endMonth))
+            );
             // Find the highest point
-            const highest = d3.max(filteredData, d => d.price);
+            const highest = d3.max(filteredData, d => d.Price);
 
             // Find the lowest point
-            const lowest = d3.min(filteredData, d => d.price);
+            const lowest = d3.min(filteredData, d => d.Price);
 
             // Find the dates of the highest and lowest points
-            const highestDate = filteredData.find(d => d.price === highest).date;
-            const lowestDate = filteredData.find(d => d.price === lowest).date;
+            const highestDate = filteredData.find(d => d.Price === highest).Date;
+            const lowestDate = filteredData.find(d => d.Price === lowest).Date;
 
             return { highest, highestDate, lowest, lowestDate };
         }
 
-     
+        // Function to draw the chart
+        function drawChart() {
+            // Clear the SVG
+            d3.select('#scene1 svg').remove();
 
-        // Set the dimensions of the graph
-        const margin = { top: 50, right: 30, bottom: 30, left: 60 },
-            width = 800 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+            // Get the width of the containing element or window
+            let width = document.getElementById('scene1').clientWidth - margin.left - margin.right;
 
-        // Append the svg object to the div
-        const svg = d3.select("#scene1")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // Read the data
-        d3.csv("sp500.csv").then(function (data) {
-            // parse the date and price 
-            data.forEach(function (d) {
-                d.date = parseTime(d.Date);
-                d.price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
-            });
-
-            // Add X axis
-            const x = d3.scaleTime()
-                .domain(d3.extent(data, function (d) { return d.date; }))
-                .range([0, width]);
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
-
-            // Add Y axis
-            const y = d3.scaleLinear()
-                .domain([0, d3.max(data, function (d) { return +d.price; })])
-                .range([height, 0]);
-            svg.append("g")
-                .call(d3.axisLeft(y));
-
-            // Add title to graph
-            svg.append("text")
-                .attr("x", (width / 2))
-                .attr("y", 0 - (margin.top / 2)) // Adjust the y-position of the title
-                .attr("text-anchor", "middle")
-                .style("font-size", "16px")
-                .style("text-decoration", "underline")
-                .text("Price vs Date");
-
-            // Add the line
-            svg.append("path")
-                .datum(data)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("d", d3.line()
-                    .x(function (d) { return x(d.date) })
-                    .y(function (d) { return y(d.price) })
-                )
-
-            // Find the high and low points for each bubble/crash
-            const dotCom = findHighLow(data, 2000, 2004);
-            const financialCrisis = findHighLow(data, 2007, 2009);
-            const covid = findHighLow(data, 2020, 2022);
-
-            // Format the date
-            const formatDate = d3.timeFormat("%m/%d/%Y");
-
-            // Create the annotations
-            const annotations = [
-                {
-                    note: {
-                        label: `Dot-Com Bubble Peak: ${dotCom.highest}`,
-                        title: formatDate(dotCom.highestDate)
-                    },
-                    x: x(dotCom.highestDate),
-                    y: y(dotCom.highest),
-                    dy: 100,
-                    dx: 100
-                },
-                {
-                    note: {
-                        label: `Dot-Com Bubble Bottom: ${dotCom.lowest}`,
-                        title: formatDate(dotCom.lowestDate)
-                    },
-                    x: x(dotCom.lowestDate),
-                    y: y(dotCom.lowest),
-                    dy: 100,
-                    dx: 100
-                },
-                {
-                    note: {
-                        label: `Financial Crisis Peak: ${financialCrisis.highest}`,
-                        title: formatDate(financialCrisis.highestDate)
-                    },
-                    x: x(financialCrisis.highestDate),
-                    y: y(financialCrisis.highest),
-                    dy: 100,
-                    dx: 100
-                },
-                {
-                    note: {
-                        label: `Financial Crisis Bottom: ${financialCrisis.lowest}`,
-                        title: formatDate(financialCrisis.lowestDate)
-                    },
-                    x: x(financialCrisis.lowestDate),
-                    y: y(financialCrisis.lowest),
-                    dy: 100,
-                    dx: 100
-                },
-                {
-                    note: {
-                        label: `COVID-19 Crash Bottom: ${covid.lowest}`,
-                        title: formatDate(covid.lowestDate)
-                    },
-                    x: x(covid.lowestDate),
-                    y: y(covid.lowest),
-                    dy: 100,
-                    dx: 100
-                },
-            ];
-
-            // Adding annotations to the chart
-            const makeAnnotations = d3.annotation()
-                .annotations(annotations);
-
-            d3.select("svg")
+            // Create a new SVG with the updated width
+            const svg = d3.select("#scene1")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .call(makeAnnotations);
-        });
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            d3.csv("sp500.csv").then(function (data) {
+                data.forEach(function (d) {
+                    d.Date = parseTime(d.Date);
+                    d.Price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
+                });
+
+                
+
+                // Add X axis
+                const x = d3.scaleTime()
+                    .domain(d3.extent(data, function (d) { return d.Date; }))
+                    .range([0, width]);
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x));
+
+                // Add Y axis
+                const y = d3.scaleLinear()
+                    .domain([0, d3.max(data, function (d) { return +d.Price; })])
+                    .range([height, 0]);
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+
+                // Add title to graph
+                svg.append("text")
+                    .attr("x", (width / 2))
+                    .attr("y", 0 - (margin.top / 2)) // Adjust the y-position of the title
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "16px")
+                    .style("text-decoration", "underline")
+                    .text("Price vs Date");
+
+                // Add the line
+                svg.append("path")
+                    .datum(data)
+                    .attr("fill", "none")
+                    .attr("stroke", "steelblue")
+                    .attr("stroke-width", 1.5)
+                    .attr("d", d3.line()
+                        .x(function (d) { return x(d.Date) })
+                        .y(function (d) { return y(d.Price) })
+                    );
+
+
+
+                const dotCom = findHighLow(data, 2000, 2004, 0, 11);
+                const financialCrisis = findHighLow(data, 2007, 2009, 0, 11);
+                const covid = findHighLow(data, 2018, 2020, 0, 2);
+
+                const annotations = [
+                    makeAnnotation('Dot-Com Bubble', dotCom.highestDate, dotCom.highest, 'dot-com.html'),
+                    makeAnnotation('Financial Crisis', financialCrisis.highestDate, financialCrisis.highest, 'financial-crisis.html'),
+                    makeAnnotation('COVID-19 Crash', covid.highestDate, covid.highest, 'covid-19.html'),
+                
+
+                ];
+
+                function makeAnnotation(label, date, price, url) {
+                    return {
+                        note: {
+                            label: `${label}: $${price.toFixed(2)}`,
+                            title: date.toLocaleDateString(),
+                        },
+                        x: x(date),
+                        y: y(price),
+                        dy: -110,
+                        dx: 20,
+                        url: url
+                    };
+                }
+
+                d3.select('#introduction')
+                    .text("This interactive chart visualizes the performance of the S&P 500 index over time, highlighting three major economic events that have significantly impacted its values. The points annotated on the graph represent the peaks associated with the Dot-Com Bubble, the 2007 Financial Crisis, and the COVID-19 pandemic. Explore the visualization to understand how these events have influenced the financial market by clicking on each of the three annotations.");
+
+                const makeAnnotations = d3.annotation()
+                    .annotations(annotations)
+                    .type(d3.annotationLabel)
+                    .accessors({
+                        x: d => x(d.Date),
+                        y: d => y(d.price)
+                    })
+                    .accessorsInverse({
+                        Date: d => x.invert(d.x),
+                        price: d => y.invert(d.y)
+                    })
+                    .on('subjectover', function (annotation) {
+                        d3.select(this).select('text').style('fill', 'red')
+                    })
+                    .on('subjectout', function (annotation) {
+                        d3.select(this).select('text').style('fill', 'black')
+                    });
+
+                // Create the annotations and add them to the chart
+                svg.append("g")
+                    .attr("class", "annotation-group")
+                    .call(makeAnnotations);
+
+                d3.selectAll(".annotation-group .annotation")
+                    .style("cursor", "pointer")  // change cursor style to indicate clickable
+                    .each(function (d, i) { // 'each' function is used to iterate over each annotation
+                        d3.select(this) // 'this' is the current annotation element
+                            .on("click", function () {
+                                window.location.href = annotations[i].url;  // redirect on click
+                            });
+                    });
+            });
+        }
+
+        // Call drawChart initially to draw the chart
+        drawChart();
+
+        // Call drawChart again whenever the window is resized
+        window.addEventListener('resize', drawChart);
+
     </script>
-
-
+3
 </body>
 
 </html>

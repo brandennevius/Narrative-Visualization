@@ -1,35 +1,33 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>S&P 500 Trend from 2000-Present</title>
+    <meta charset="UTF-8">
+    <title>Historical Market Crashes</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://unpkg.com/d3-svg-annotation@2/d3-annotation.min.js"></script>
-
-    <style>
-        .annotation-note-title {
-            fill: black;
-            font-size: 0.8em;
-        }
-
-        .annotation-note-label {
-            fill: black;
-            font-size: 0.8em;
-        }
-
-        .annotation-note-bg {
-            fill: #FFEFCC;
-        }
-    </style>
+    <script src="https://d3js.org/d3-scale.v3.min.js"></script>
+    <script src="https://d3js.org/d3-time.v2.min.js"></script>
+    <script src="https://d3js.org/d3-time-format.v3.min.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
 
 <body>
-    <div id="scene1">
-        <p id="introduction"></p>
-        <!-- Here is where your SVG will be appended -->
+    <h1>Historical Market Crashes</h1>
+    <div id="overview">
+        <h2>Overview</h2>
+        <p>The stock market is a complex system, and it's not uncommon for it to experience periods of rapid decline, also known as market crashes. In this visualization, we explore three significant market crashes in recent history: the Dotcom Bubble, the 2008 Financial Crisis, and the 2020 COVID-19 Crash.</p>
+        
+        <h2>The Dotcom Bubble</h2>
+        <p>The Dotcom Bubble was a speculative market bubble centered around internet companies from 1995 to 2002. Click the annotation on the chart to learn more about the Dotcom Bubble crash.</p>
+
+        <h2>The 2008 Financial Crisis</h2>
+        <p>The 2008 Financial Crisis was a severe worldwide economic crisis that occurred in the late 2000s. It was the most serious financial crisis since the Great Depression (1929). Click the annotation on the chart to learn more about the 2008 Financial Crisis crash.</p>
+
+        <h2>The 2020 COVID-19 Crash</h2>
+        <p>The COVID-19 Crash refers to a major global recession characterized by various lockdowns due to the COVID-19 pandemic. Click the annotation on the chart to learn more about the COVID-19 crash.</p>
     </div>
+    <div id="scene1"></div>
     <script>
       const margin = { top: 100, right: 100, bottom: 100, left: 100 },
             width = window.innerWidth - margin.left - margin.right,  // use window.innerWidth
@@ -146,9 +144,6 @@
                     };
                 }
 
-                d3.select('#introduction')
-                    .text("This interactive chart visualizes the performance of the S&P 500 index over time, highlighting three major economic events that have significantly impacted its values. The points annotated on the graph represent the peaks associated with the Dot-Com Bubble, the 2007 Financial Crisis, and the COVID-19 pandemic. Explore the visualization to understand how these events have influenced the financial market by clicking on each of the three annotations.");
-
                 const makeAnnotations = d3.annotation()
                     .annotations(annotations)
                     .type(d3.annotationLabel)
@@ -190,7 +185,7 @@
         window.addEventListener('resize', drawChart);
 
     </script>
-3
+
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Financial Crisis</title>
@@ -11,13 +12,202 @@
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
+
 <body>
     <h1>Financial Crisis</h1>
+    <div id="analysis">
+        <h2>An In-depth Analysis of the Financial Crisis</h2>
+    
+        <h3>Overview</h3>
+        <p>The Financial Crisis, also known as the Great Recession, was a severe worldwide economic crisis that took place in the late 2000s. It was the most serious financial crisis since the Great Depression (1929). Predominantly, a downturn in the global housing market led to a "credit crunch" where national banks suffered severe losses and led to the downturn in stock markets worldwide.</p>
+    
+        <h3>Lead Up to the Crisis</h3>
+        <p>During the early-to-mid 2000s, there was an increase in house prices due to speculative thinking and a high amount of mortgage-backed securities tied to American real estate, as well as a vast amount of debt linked to that. Financial products such as collateralized debt obligations (CDOs) and credit default swaps (CDS) were used to significant effect. When the bubble burst, a large number of homeowners saw their asset devalued significantly compared to their mortgage.</p>
+    
+        <h3>The Crisis and Crash</h3>
+        <p>The peak of the market before the onset of the financial crisis was reached on 10/7/2007, when the S&P 500 hit a high of $1,576.09. What followed was a full-blown international banking crisis leading to the bankruptcy of Lehman Brothers on September 15, 2008. The market hit bottom on 03/01/2009, with the S&P 500 falling to $666.79. This represented a drop of 57.69% from the peak.</p>
+    
+        <h3>Recovery</h3>
+        <p>The recovery from the Financial Crisis was a slow process. It took approximately 5 years for the market to recover to pre-crash levels. The crisis led to the Great Recession, where GDP fell by 4.2% in the U.S, leading to significant job losses. The period was marked by tight regulations and monetary policy including Quantitative Easing (QE) which eventually led to slow but steady recovery.</p>
+    
+        <p>The financial crisis served as a stark reminder of the interlinked nature of global financial systems and the importance of oversight and regulation. The crisis led to many reforms including stronger financial regulation to prevent a recurrence of the crisis.</p>
+    </div>
     <div id="scene1"></div>
     <script>
-        // your JavaScript code goes here, with the same structure as the main page
-        // but adjust the findHighLow() function call to focus on the COVID-19 time period:
-        // const covid = findHighLow(data, 2020, 2022);
+        const margin = { top: 100, right: 300, bottom: 100, left: 200 },
+            width = window.innerWidth - margin.left - margin.right,  // use window.innerWidth
+            height = window.innerHeight - margin.top - margin.bottom; // use window.innerHeight
+
+        const parseTime = d3.timeParse("%m/%d/%Y");
+        const formatDate = d3.timeFormat("%m/%d/%Y");
+
+        // Function to draw the chart
+        function drawChart() {
+            // Clear the SVG
+            d3.select('#scene1 svg').remove();
+
+            // Create a new SVG with the updated width
+            const svg = d3.select("#scene1")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            d3.csv("sp500.csv").then(function (data) {
+                data.forEach(function (d) {
+                    d.Date = parseTime(d.Date);
+                    d.Price = +d.Price.replace(/,/g, '');
+                    d.Open = +d.Open.replace(/,/g, '');
+                    d.High = +d.High.replace(/,/g, '');
+                    d.Low = +d.Low.replace(/,/g, '');
+                    d['Change %'] = +d['Change %'].replace(/%/g, '');
+                });
+
+
+                // Filter data for Financial Crisis period (2007-2009)
+                data = data.filter(function (d) {
+                    return d.Date.getFullYear() >= 2007 && d.Date.getFullYear() <= 2009;
+                });
+
+                const x = d3.scaleTime()
+                    .domain(d3.extent(data, function (d) { return d.Date; }))
+                    .range([0, width]);
+
+                const y = d3.scaleLinear()
+                    .range([height, 0]);
+
+                const barWidth = width / data.length;
+
+                y.domain([d3.min(data, function (d) { return d.Low - 100; }), d3.max(data, function (d) { return d.High + 150; })]);
+
+                // Find the highest and lowest points during the Financial Crisis
+                let financialCrisisPeak = data[0];
+                let financialCrisisBottom = data[0];
+
+                data.forEach(function (d) {
+                    if (d.High > financialCrisisPeak.High) {
+                        financialCrisisPeak = d;
+                    }
+
+                    if (d.Low < financialCrisisBottom.Low) {
+                        financialCrisisBottom = d;
+                    }
+                });
+                // Calculate the percentage drop
+                const percentageDrop = ((financialCrisisPeak.High - financialCrisisBottom.Low) / financialCrisisPeak.High) * 100;
+
+                // Calculate the time difference in years and months
+                const timeDiff = Math.abs(financialCrisisPeak.Date.getFullYear() - financialCrisisBottom.Date.getFullYear()) * 12 +
+                    Math.abs(financialCrisisPeak.Date.getMonth() - financialCrisisBottom.Date.getMonth());
+
+                const years = Math.floor(timeDiff / 12);
+                const months = timeDiff % 12;
+
+                // Calculate the midpoint of the peak and bottom dates
+                let midDate = new Date((financialCrisisPeak.Date.getTime() + financialCrisisBottom.Date.getTime()) / 2);
+
+                const annotations = [
+                    {
+                        type: d3.annotationCallout,
+                        note: { title: "Financial Crisis Peak", label: `High: ${financialCrisisPeak.High}` },
+                        x: x(financialCrisisPeak.Date),
+                        y: y(financialCrisisPeak.High),
+                        dx: 50,
+                        dy: -30
+                    },
+                    {
+                        type: d3.annotationCallout,
+                        note: { title: "Financial Crisis Bottom", label: `Low: ${financialCrisisBottom.Low}` },
+                        x: x(financialCrisisBottom.Date),
+                        y: y(financialCrisisBottom.Low),
+                        dx: 110,
+                        dy: -50
+                    },
+                    {
+                        type: d3.annotationXYThreshold,
+                        note: {
+                            title: `The market fell ${percentageDrop.toFixed(2)}% over ${years} years and ${months} months.`,
+                            label: `From ${formatDate(financialCrisisPeak.Date)} to ${formatDate(financialCrisisBottom.Date)}`,
+                            align: "middle",  // to align the text in the middle
+                            wrap: width / 2  // to control the width of the text box
+                        },
+                        x: x(midDate), // x position is in the middle of the peak and bottom dates
+                        y: (y(financialCrisisPeak.High) + y(financialCrisisBottom.Low)) / 2,  // y position is in the middle of the peak and bottom prices
+                        dx: 200,  // offset in x direction
+                        dy: -120   // offset in y direction
+                    }
+                ];
+
+                const makeAnnotations = d3.annotation().annotations(annotations);
+                svg.append("g").call(makeAnnotations);
+
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x).ticks(d3.timeMonth.every(1)).tickFormat(formatDate))
+                    .selectAll("text")
+                    .attr("dx", "-2.5em")
+                    .attr("dy", "0em")
+                    .attr("transform", "rotate(-65)"); // Rotate labels to prevent overlap
+
+                // Add title to graph
+                svg.append("text")
+                    .attr("x", (width / 2))
+                    .attr("y", 0 - (margin.top / 2)) // Adjust the y-position of the title
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "16px")
+                    .style("text-decoration", "underline")
+                    .text("Price vs Date");
+
+                // Add a line from peak to bottom
+                svg.append("line")
+                    .style("stroke", "black") // black color
+                    .style("stroke-dasharray", ("3, 3")) // dashed array for line
+                    .attr("x1", x(financialCrisisPeak.Date))
+                    .attr("y1", y(financialCrisisPeak.High))
+                    .attr("x2", x(financialCrisisBottom.Date))
+                    .attr("y2", y(financialCrisisBottom.Low));
+
+
+
+                // Add the wicks
+                svg.selectAll(".wick")
+                    .data(data)
+                    .enter()
+                    .append("line")
+                    .attr("class", "wick")
+                    .attr("x1", function (d) { return x(d.Date) + barWidth / 2; })
+                    .attr("x2", function (d) { return x(d.Date) + barWidth / 2; })
+                    .attr("y1", function (d) { return y(d.High); })
+                    .attr("y2", function (d) { return y(d.Low); })
+                    .attr("stroke", function (d) { return d.Open > d.Price ? "black" : "black"; });
+
+                // Add the candlestick rectangles
+                svg.selectAll(".candle")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "candle")
+                    .attr("x", function (d) { return x(d.Date); })
+                    .attr("y", function (d) { return y(Math.max(d.Open, d.Price)); })
+                    .attr("height", function (d) { return Math.abs(y(d.Open) - y(d.Price)) || 1; })
+                    .attr("width", barWidth)
+                    .attr("fill", function (d) { return d.Open > d.Price ? "red" : "green"; });
+
+            });
+        }
+
+        // Call drawChart initially to draw the chart
+        drawChart();
+
+        // Call drawChart again whenever the window is resized
+        window.addEventListener('resize', drawChart);
     </script>
+
+
 </body>
+
 </html>

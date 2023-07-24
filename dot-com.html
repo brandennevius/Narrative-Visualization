@@ -12,6 +12,23 @@
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: #f9f9f9;
+        padding: 10px;
+    }
+    .navbar a {
+        margin: 0 15px;
+        color: #333;
+        text-decoration: none;
+    }
+    .navbar a:hover {
+        color: #007BFF;
+    }
+</style>
 
 <body>
     <h1>Dot Com Bubble</h1>
@@ -21,24 +38,38 @@
         <a href="dot-com.html">Dotcom Bubble</a>
         <a href="financial-crisis.html">Financial Crisis</a>
         <a href="covid-19.html">COVID-19 Crash</a>
-      </div>
-    
+    </div>
+
     <div id="story">
         <h2>An In-depth Analysis of the Dotcom Bubble Crash</h2>
 
-        <p>The Dotcom Bubble, also known as the Internet Bubble, was an economic and stock market event that occurred from 1995 to 2002. This period was marked by extreme speculation and the rapid growth of technology sector stocks, driven by investments in Internet-based companies or "dotcoms." </p>
+        <p>The Dotcom Bubble, also known as the Internet Bubble, was an economic and stock market event that occurred
+            from 1995 to 2002. This period was marked by extreme speculation and the rapid growth of technology sector
+            stocks, driven by investments in Internet-based companies or "dotcoms." </p>
 
         <h3>Lead Up to the Bubble</h3>
 
-        <p>In the mid-to-late 90s, with the commercialization of the internet, investors were captivated by the promise of new technologies and the potential profits of the burgeoning digital economy. This led to massive investments into Internet companies and technology stocks, driving up their prices to unprecedented levels. This speculative frenzy was fueled by the belief that these "dotcoms" would revolutionize business and generate incredible returns. </p>
+        <p>In the mid-to-late 90s, with the commercialization of the internet, investors were captivated by the promise
+            of new technologies and the potential profits of the burgeoning digital economy. This led to massive
+            investments into Internet companies and technology stocks, driving up their prices to unprecedented levels.
+            This speculative frenzy was fueled by the belief that these "dotcoms" would revolutionize business and
+            generate incredible returns. </p>
 
         <h3>The Bubble and Crash</h3>
 
-        <p>The peak of the Dotcom Bubble was reached on 3/19/2000, when the market, as represented by the S&P 500, hit a high of $1552.87. However, the underlying business models of many dotcoms were flawed. Many of these companies were not generating profits, and some were not even generating revenue. Despite this, due to speculative investing, their stock prices continued to rise. When investors eventually recognized this incongruity, confidence dropped, leading to a massive sell-off. The market hit a bottom on 10/6/2002, with the S&P 500 falling to $768.63. This represented a drop of 50.50% from the peak.</p>
+        <p>The peak of the Dotcom Bubble was reached on 3/19/2000, when the market, as represented by the S&P 500, hit a
+            high of $1552.87. However, the underlying business models of many dotcoms were flawed. Many of these
+            companies were not generating profits, and some were not even generating revenue. Despite this, due to
+            speculative investing, their stock prices continued to rise. When investors eventually recognized this
+            incongruity, confidence dropped, leading to a massive sell-off. The market hit a bottom on 10/6/2002, with
+            the S&P 500 falling to $768.63. This represented a drop of 50.50% from the peak.</p>
 
         <h3>Recovery</h3>
 
-        <p>The recovery from the Dotcom crash was slow and arduous. It took approximately 5 years for the market to recover to its pre-crash levels. Despite the economic pain caused by the crash, it was a catalyst for the restructuring and maturation of the technology sector, paving the way for more sustainable growth in the years to come.</p>
+        <p>The recovery from the Dotcom crash was slow and arduous. It took approximately 5 years for the market to
+            recover to its pre-crash levels. Despite the economic pain caused by the crash, it was a catalyst for the
+            restructuring and maturation of the technology sector, paving the way for more sustainable growth in the
+            years to come.</p>
     </div>
 
     <div id="scene1"></div>
@@ -212,13 +243,23 @@
             });
         }
 
-        
+
 
         // Call drawChart initially to draw the chart
         drawChart();
 
         // Call drawChart again whenever the window is resized
         window.addEventListener('resize', drawChart);
+
+        annotations.push({
+            type: d3.annotationCallout,
+            note: { title: "COVID-19 Crash Peak", label: `High: ${covidCrashPeak.High}` },
+            x: x(covidCrashPeak.Date),
+            y: y(covidCrashPeak.High),
+            dx: 50,
+            dy: -30
+        });
+
     </script>
 
 

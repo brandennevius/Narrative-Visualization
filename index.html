@@ -11,9 +11,32 @@
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: #f9f9f9;
+        padding: 10px;
+    }
+    .navbar a {
+        margin: 0 15px;
+        color: #333;
+        text-decoration: none;
+    }
+    .navbar a:hover {
+        color: #007BFF;
+    }
+</style>
 
 <body>
     <h1>Historical Market Crashes</h1>
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="dot-com.html">Dotcom Bubble</a>
+        <a href="financial-crisis.html">Financial Crisis</a>
+        <a href="covid-19.html">COVID-19 Crash</a>
+    </div>
     <div id="overview">
         <h2>Overview</h2>
         <p>The stock market is a complex system, and it's not uncommon for it to experience periods of rapid decline, also known as market crashes. In this visualization, we explore three significant market crashes in recent history: the Dotcom Bubble, the 2008 Financial Crisis, and the 2020 COVID-19 Crash.</p>

@@ -13,6 +13,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
 <style>
+    .navbar a {
+        color: black;
+    }
+
+    .annotation-note-title,
+    .annotation-note-label,
+    .annotation-note-bg {
+        fill: black;
+        stroke: none;
+    }
+
     .navbar {
         position: fixed;
         top: 0;
@@ -20,11 +31,13 @@
         background-color: #f9f9f9;
         padding: 10px;
     }
+
     .navbar a {
         margin: 0 15px;
         color: #333;
         text-decoration: none;
     }
+
     .navbar a:hover {
         color: #007BFF;
     }

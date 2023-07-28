@@ -13,6 +13,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
 <style>
+    .navbar a {
+        color: black;
+    }
+
+    .annotation-note-title,
+    .annotation-note-label,
+    .annotation-note-bg {
+        fill: black;
+        stroke: none;
+    }
+
     .navbar {
         position: fixed;
         top: 0;
@@ -20,11 +31,13 @@
         background-color: #f9f9f9;
         padding: 10px;
     }
+
     .navbar a {
         margin: 0 15px;
         color: #333;
         text-decoration: none;
     }
+
     .navbar a:hover {
         color: #007BFF;
     }
@@ -37,23 +50,38 @@
         <a href="dot-com.html">Dotcom Bubble</a>
         <a href="financial-crisis.html">Financial Crisis</a>
         <a href="covid-19.html">COVID-19 Crash</a>
-      </div>
+    </div>
     <div id="analysis">
         <h2>An In-depth Analysis of the Financial Crisis</h2>
-    
+
         <h3>Overview</h3>
-        <p>The Financial Crisis, also known as the Great Recession, was a severe worldwide economic crisis that took place in the late 2000s. It was the most serious financial crisis since the Great Depression (1929). Predominantly, a downturn in the global housing market led to a "credit crunch" where national banks suffered severe losses and led to the downturn in stock markets worldwide.</p>
-    
+        <p>The Financial Crisis, also known as the Great Recession, was a severe worldwide economic crisis that took
+            place in the late 2000s. It was the most serious financial crisis since the Great Depression (1929).
+            Predominantly, a downturn in the global housing market led to a "credit crunch" where national banks
+            suffered severe losses and led to the downturn in stock markets worldwide.</p>
+
         <h3>Lead Up to the Crisis</h3>
-        <p>During the early-to-mid 2000s, there was an increase in house prices due to speculative thinking and a high amount of mortgage-backed securities tied to American real estate, as well as a vast amount of debt linked to that. Financial products such as collateralized debt obligations (CDOs) and credit default swaps (CDS) were used to significant effect. When the bubble burst, a large number of homeowners saw their asset devalued significantly compared to their mortgage.</p>
-    
+        <p>During the early-to-mid 2000s, there was an increase in house prices due to speculative thinking and a high
+            amount of mortgage-backed securities tied to American real estate, as well as a vast amount of debt linked
+            to that. Financial products such as collateralized debt obligations (CDOs) and credit default swaps (CDS)
+            were used to significant effect. When the bubble burst, a large number of homeowners saw their asset
+            devalued significantly compared to their mortgage.</p>
+
         <h3>The Crisis and Crash</h3>
-        <p>The peak of the market before the onset of the financial crisis was reached on 10/7/2007, when the S&P 500 hit a high of $1,576.09. What followed was a full-blown international banking crisis leading to the bankruptcy of Lehman Brothers on September 15, 2008. The market hit bottom on 03/01/2009, with the S&P 500 falling to $666.79. This represented a drop of 57.69% from the peak.</p>
-    
+        <p>The peak of the market before the onset of the financial crisis was reached on 10/7/2007, when the S&P 500
+            hit a high of $1,576.09. What followed was a full-blown international banking crisis leading to the
+            bankruptcy of Lehman Brothers on September 15, 2008. The market hit bottom on 03/01/2009, with the S&P 500
+            falling to $666.79. This represented a drop of 57.69% from the peak.</p>
+
         <h3>Recovery</h3>
-        <p>The recovery from the Financial Crisis was a slow process. It took approximately 5 years for the market to recover to pre-crash levels. The crisis led to the Great Recession, where GDP fell by 4.2% in the U.S, leading to significant job losses. The period was marked by tight regulations and monetary policy including Quantitative Easing (QE) which eventually led to slow but steady recovery.</p>
-    
-        <p>The financial crisis served as a stark reminder of the interlinked nature of global financial systems and the importance of oversight and regulation. The crisis led to many reforms including stronger financial regulation to prevent a recurrence of the crisis.</p>
+        <p>The recovery from the Financial Crisis was a slow process. It took approximately 5 years for the market to
+            recover to pre-crash levels. The crisis led to the Great Recession, where GDP fell by 4.2% in the U.S,
+            leading to significant job losses. The period was marked by tight regulations and monetary policy including
+            Quantitative Easing (QE) which eventually led to slow but steady recovery.</p>
+
+        <p>The financial crisis served as a stark reminder of the interlinked nature of global financial systems and the
+            importance of oversight and regulation. The crisis led to many reforms including stronger financial
+            regulation to prevent a recurrence of the crisis.</p>
     </div>
     <div id="scene1"></div>
     <script>

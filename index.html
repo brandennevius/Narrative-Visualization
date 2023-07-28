@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Historical Market Crashes</title>
@@ -12,6 +13,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.0/d3-annotation.min.js"></script>
 </head>
 <style>
+    .navbar a {
+        color: black;
+    }
+
+    .annotation-note-title,
+    .annotation-note-label,
+    .annotation-note-bg {
+        fill: black;
+        stroke: none;
+    }
+
     .navbar {
         position: fixed;
         top: 0;
@@ -19,11 +31,13 @@
         background-color: #f9f9f9;
         padding: 10px;
     }
+
     .navbar a {
         margin: 0 15px;
         color: #333;
         text-decoration: none;
     }
+
     .navbar a:hover {
         color: #007BFF;
     }
@@ -39,20 +53,26 @@
     </div>
     <div id="overview">
         <h2>Overview</h2>
-        <p>The stock market is a complex system, and it's not uncommon for it to experience periods of rapid decline, also known as market crashes. In this visualization, we explore three significant market crashes in recent history: the Dotcom Bubble, the 2008 Financial Crisis, and the 2020 COVID-19 Crash.</p>
-        
+        <p>The stock market is a complex system, and it's not uncommon for it to experience periods of rapid decline,
+            also known as market crashes. In this visualization, we explore three significant market crashes in recent
+            history: the Dotcom Bubble, the 2008 Financial Crisis, and the 2020 COVID-19 Crash.</p>
+
         <h2>The Dotcom Bubble</h2>
-        <p>The Dotcom Bubble was a speculative market bubble centered around internet companies from 1995 to 2002. Click the annotation on the chart to learn more about the Dotcom Bubble crash.</p>
+        <p>The Dotcom Bubble was a speculative market bubble centered around internet companies from 1995 to 2002. Click
+            the annotation on the chart to learn more about the Dotcom Bubble crash.</p>
 
         <h2>The 2008 Financial Crisis</h2>
-        <p>The 2008 Financial Crisis was a severe worldwide economic crisis that occurred in the late 2000s. It was the most serious financial crisis since the Great Depression (1929). Click the annotation on the chart to learn more about the 2008 Financial Crisis crash.</p>
+        <p>The 2008 Financial Crisis was a severe worldwide economic crisis that occurred in the late 2000s. It was the
+            most serious financial crisis since the Great Depression (1929). Click the annotation on the chart to learn
+            more about the 2008 Financial Crisis crash.</p>
 
         <h2>The 2020 COVID-19 Crash</h2>
-        <p>The COVID-19 Crash refers to a major global recession characterized by various lockdowns due to the COVID-19 pandemic. Click the annotation on the chart to learn more about the COVID-19 crash.</p>
+        <p>The COVID-19 Crash refers to a major global recession characterized by various lockdowns due to the COVID-19
+            pandemic. Click the annotation on the chart to learn more about the COVID-19 crash.</p>
     </div>
     <div id="scene1"></div>
     <script>
-      const margin = { top: 100, right: 100, bottom: 100, left: 100 },
+        const margin = { top: 100, right: 100, bottom: 100, left: 100 },
             width = window.innerWidth - margin.left - margin.right,  // use window.innerWidth
             height = window.innerHeight - margin.top - margin.bottom; // use window.innerWidth
 
@@ -102,7 +122,7 @@
                     d.Price = +d.Price.replace(/,/g, ''); // removing the commas for correct parsing
                 });
 
-                
+
 
                 // Add X axis
                 const x = d3.scaleTime()
@@ -149,7 +169,7 @@
                     makeAnnotation('Dot-Com Bubble', dotCom.highestDate, dotCom.highest, 'dot-com.html'),
                     makeAnnotation('Financial Crisis', financialCrisis.highestDate, financialCrisis.highest, 'financial-crisis.html'),
                     makeAnnotation('COVID-19 Crash', covid.highestDate, covid.highest, 'covid-19.html'),
-                
+
 
                 ];
 
